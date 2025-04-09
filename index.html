@@ -90,9 +90,11 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 2 - 1;
+                // Make particle size adaptive to screen size
+                const baseSize = Math.min(canvas.width, canvas.height) / 400;
+                this.size = Math.random() * baseSize + baseSize;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
                 this.color = `hsl(${Math.random() * 20 + 330}, 100%, 60%)`;
                 this.targetX = x;
                 this.targetY = y;
@@ -101,10 +103,11 @@
             }
 
             update() {
+                // Slower movement speed
                 const dx = this.targetX - this.x;
                 const dy = this.targetY - this.y;
-                this.x += dx * 0.05;
-                this.y += dy * 0.05;
+                this.x += dx * 0.02; // Reduced from 0.05 to 0.02
+                this.y += dy * 0.02; // Reduced from 0.05 to 0.02
             }
 
             draw() {
@@ -182,8 +185,9 @@
         function updateHeart() {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-            const scale = Math.min(canvas.width, canvas.height) / 35;
-            const padding = Math.min(canvas.width, canvas.height) * 0.15;
+            // Make heart size more adaptive
+            const scale = Math.min(canvas.width, canvas.height) / 40; // Reduced from 35 to 40
+            const padding = Math.min(canvas.width, canvas.height) * 0.1; // Reduced from 0.15 to 0.1
 
             particles.forEach((particle, i) => {
                 const angle = (i / particles.length) * Math.PI * 2;
@@ -271,21 +275,21 @@
                 setTimeout(() => {
                     animateText(messages[currentMessageIndex]);
                     currentMessageIndex++;
-                    setTimeout(showNextMessage, 1200);
-                }, 300);
+                    setTimeout(showNextMessage, 3000);
+                }, 500);
             } else {
                 setTimeout(() => {
                     createParticles(200); // Default number for heart
                     updateHeart();
                     isAnimatingText = false;
                     loveButton.style.display = 'block';
-                }, 1200);
+                }, 3000);
             }
         }
 
         // Animation loop
         function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; // Increased opacity further
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Reduced opacity for longer trails
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Update and draw stars
@@ -322,9 +326,13 @@
                 const dy = mouseY - particle.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
-                if (distance < 100) {
-                    particle.targetX = particle.x - dx * 0.1;
-                    particle.targetY = particle.y - dy * 0.1;
+                // Make interaction distance adaptive to screen size
+                const interactionDistance = Math.min(canvas.width, canvas.height) / 10;
+                
+                if (distance < interactionDistance) {
+                    // Slower particle movement in response to mouse
+                    particle.targetX = particle.x - dx * 0.05; // Reduced from 0.1 to 0.05
+                    particle.targetY = particle.y - dy * 0.05; // Reduced from 0.1 to 0.05
                 }
             });
         });
